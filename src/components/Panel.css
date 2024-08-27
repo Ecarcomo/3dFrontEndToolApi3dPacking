@@ -1,0 +1,12 @@
+.input_i_num{
+    width: 40px;
+} 
+
+.form_i{
+    padding: 5px;
+}
+
+.res_box,.div_box{
+    display: flex;
+    flex-direction: column;
+}
