@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import {axiosClient} from "../Helpers/axiosCLient";
 import "./Panel.css"
 import Modal from 'react-modal';
+import ThreeJSScene from './ThreeJSScene';
 
 Modal.setAppElement('#root');
 
@@ -68,6 +69,11 @@ export default function Panel () {
   //const [indexItemSelected,setIndexItemSelected]= useState<number>(0);
   const [bauSelected, setBauSelected] = useState<Baulera>();
   const [modalIsOpen, setIsOpen] = useState(false);
+  const [renderProps, setRenderProps] = useState({width: 1,
+    height: 1,
+    depth: 1,
+    position: { x: 0, y: 0, z: 0 },
+    rotation: { x: 0, y: 0, z: 0 },});
 
    const bauleras = {
         "bauleras":[
@@ -205,6 +211,24 @@ export default function Panel () {
         document.getElementById("li-item-"+index)?.removeChild;
         console.log(itemsPrev);
     }
+    
+const handleRenderRequest = async () => {
+    try {
+      const response = {
+        data: {
+          width: 2,
+          height: 2,
+          depth: 2,
+          position: { x: 1, y: 1, z: 1 },
+          rotation: { x: 0.5, y: 0.5, z: 0 },
+        }
+      };
+  
+      setRenderProps(response.data);
+    } catch (error) {
+      console.error('Error in POST request', error);
+    }
+  };
 
     return (
         <>
@@ -304,8 +328,10 @@ export default function Panel () {
                                 </div>
                             </td>
                             <td className="div_box">
-                                <button type="button" >Renderizar 3D</button>
-                                <iframe src=""></iframe>
+                                <button type="button" onClick={handleRenderRequest} >Renderizar 3D</button>
+                                <iframe src="">
+                                <ThreeJSScene cubeProps={renderProps} />
+                                </iframe>
                             </td>
                         </tr>
                     </table> 
