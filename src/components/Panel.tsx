@@ -1,8 +1,26 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {axiosClient} from "../Helpers/axiosCLient";
 import "./Panel.css"
 import Modal from 'react-modal';
+<<<<<<< Updated upstream
 import ThreeJSScene from './ThreeJSScene';
+=======
+import ToggleButton from 'react-bootstrap/ToggleButton';
+import ToggleButtonGroup from "react-bootstrap/esm/ToggleButtonGroup";
+import Button from 'react-bootstrap/Button'
+import Table from 'react-bootstrap/Table'
+import Badge from "react-bootstrap/esm/Badge";
+import FloatingLabel from "react-bootstrap/esm/FloatingLabel";
+import Form from "react-bootstrap/esm/Form";
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Stack from "react-bootstrap/esm/Stack";
+import { InfoItem, parserInfoItems } from "../functions/utils.functions";
+import { Scene } from "../functions/render.functions";
+import { createRoot } from "react-dom/client";
+
+>>>>>>> Stashed changes
 
 Modal.setAppElement('#root');
 
@@ -29,7 +47,7 @@ export default function Panel () {
    // const [items , setItems] = useState({});
     //const [loading , setLoading] = useState(true);
    // const [error , setError] = useState(false);
-    const resultRef = useRef<HTMLInputElement | null>(null);
+
     const itemsSelectedTable = useRef<HTMLTableElement | null>(null);
     const itemsInput_w = useRef<HTMLInputElement | null>(null);
     const itemsInput_h = useRef<HTMLInputElement | null>(null);
@@ -58,6 +76,7 @@ export default function Panel () {
   }
 
   interface Baulera {
+    value:number;
     name: string;
     width: number;
     height: number;
@@ -67,6 +86,7 @@ export default function Panel () {
 
   const [itemsSelected, setItemsSelected] = useState<Item[]>([]);
   //const [indexItemSelected,setIndexItemSelected]= useState<number>(0);
+<<<<<<< Updated upstream
   const [bauSelected, setBauSelected] = useState<Baulera>();
   const [modalIsOpen, setIsOpen] = useState(false);
   const [renderProps, setRenderProps] = useState({width: 1,
@@ -74,14 +94,22 @@ export default function Panel () {
     depth: 1,
     position: { x: 0, y: 0, z: 0 },
     rotation: { x: 0, y: 0, z: 0 },});
+=======
+>>>>>>> Stashed changes
 
+  const [dataRender ,setDataRender] = useState<InfoItem[]>([]);
+
+  const [modalIsOpen, setIsOpen] = useState(false);
+  const [badgleColor,setBadgleColor] = useState<string>('primary');
+  
    const bauleras = {
         "bauleras":[
-            {"name":"Baulera 60x300x300","width":0.6,"height":3.0,"depth":3.0, "weightLimit":1200},
-            {"name":"Baulera 100x300x300","width":1.0,"height":3.0,"depth":3.0, "weightLimit":2000},
-            {"name":"Baulera 500x300x300","width":5.0,"height":3.0,"depth":3.0, "weightLimit":10000}
+            {"value":1,"name":"Baulera 60x300x300","width":0.6,"height":3.0,"depth":3.0, "weightLimit":1200},
+            {"value":2,"name":"Baulera 100x300x300","width":1.0,"height":3.0,"depth":3.0, "weightLimit":2000},
+            {"value":3,"name":"Baulera 500x300x300","width":5.0,"height":3.0,"depth":3.0, "weightLimit":10000}
         ]
    };
+   const [bauSelected, setBauSelected] = useState<Baulera>(bauleras["bauleras"][0]);
    //instancio items predeterminados
    const [itemsPrev, setItemsPrev] = useState<ItemsPrev[]>([
     {"name": "sillon 2 cuerpos - 300x80x80 50kg","width":3.0,"height":0.8,"depth":0.8,"weight":50},
@@ -89,6 +117,17 @@ export default function Panel () {
     {"name": "caja - 30x10x30 2kg","width":0.3,"height":0.1,"depth":0.3,"weight":2}
     ]);
 
+    useEffect(()=>
+    {
+        return ()=>{
+            const divRender = document.getElementById('divRender');
+            if (divRender) {
+                const root = createRoot(divRender);
+                root.render(<Scene objsCoordenadas={dataRender} />);
+            }
+        }
+        
+    },dataRender);
     
     const openModal=() =>{
     setIsOpen(true);
@@ -160,18 +199,23 @@ export default function Panel () {
           };
         try {
             const response = await axiosClient.post(`/api/pack/`,data,config);
+            const badgle = document.getElementById("resultRef");
             console.log(response.data);
-            if (resultRef.current) {
+            if (badgle) {
                 //Si el Array "unfittedItems" está vacio , entonces entraron todos los items
                 if(response.data["unfittedItems"].length === 0){
-                    resultRef.current.value = 'Entra todo';
+                    setBadgleColor('success');
+                    badgle.innerHTML = 'Entra todo';
                 }else{
-                    resultRef.current.value = 'Quedaron cosas afuera';
+                    setBadgleColor('danger');
+                    badgle.innerHTML = 'Quedaron cosas afuera';
                 }
                 
                 if (textAreaFitted.current && textAreaUnFitted.current) {
-                    textAreaFitted.current.value = response.data["fittedItems"].reduce((acc:string,item:any)=> acc + item["item"]+"\n","");
-                    textAreaUnFitted.current.value = response.data["unfittedItems"].reduce((acc:string,item:any)=> acc + item["item"]+"\n","");
+                    let fit =response.data["fittedItems"].reduce((acc:string,item:any)=> acc +"* " +item["item"]+"\n\n","");
+                    textAreaFitted.current.value = fit;
+                    let unfit = response.data["unfittedItems"].reduce((acc:string,item:any)=> acc + "* " +item["item"]+"\n\n","");
+                    textAreaUnFitted.current.value = unfit;
                 }
             }
         } catch (error) {
@@ -179,10 +223,6 @@ export default function Panel () {
         }
        
     };
-
-    function changeBau(index:number): void {
-        setBauSelected( bauleras["bauleras"][index]);
-    }
 
     function AddItem (){
         const name_i = itemsInput_name.current?.value;
@@ -230,63 +270,84 @@ const handleRenderRequest = async () => {
     }
   };
 
+    const handleRender3d = () => {
+        if(textAreaFitted.current){
+            let objsCoordenadas = parserInfoItems(textAreaFitted.current.value);
+            console.log(objsCoordenadas);
+            setDataRender(objsCoordenadas);
+        }
+    }
+
     return (
         <>
-        <section id="container">
+        <Container id="container">
             <form  onSubmit={handleSubmit}>
-                <div id="panel-items">
-                    <div>
+                <Row id="panel-items">
+                    <Col xs={12} md={6} lg={6}>
                         <div>
-                            <center><h3>Medidas en CMs (Ancho ,alto ,profundo)</h3></center>
-                            <center>Seleccionar una baulera</center>
-                                {
-                                    bauleras["bauleras"].map((opcion,index)=>(
-                                        <>
-                                            <span className="chk-baulera">
-                                                <label htmlFor={"baulera_"+index}>{opcion["name"]}</label>
-                                                <input type="radio" name="bau" onChange={()=>changeBau(index)} required/>
-                                            </span> 
-                                            <br />
-                                        </>
-                                    ))
-                                }
+                            <center><h3><Badge bg="secondary">Medidas en CMs (Ancho ,alto ,profundo)</Badge></h3>
+                                <br />
+                                Seleccionar una baulera
+                                <br />
+                                <ToggleButtonGroup name="bau-opciones" type="radio" vertical={false}>
+                                    {bauleras["bauleras"].map((opcion, idx) => (
+                                        <ToggleButton
+                                            key={idx}
+                                            id={`radio-${idx}`}
+                                            type="radio"
+                                            variant="dark"
+                                            name="radio"
+                                            value={opcion.value}
+                                            checked={bauSelected.value === idx}
+                                            onChange={() => setBauSelected( bauleras["bauleras"][idx])}
+                                        >
+                                            {opcion.name}
+                                        </ToggleButton>
+                                    ))}
+                                </ToggleButtonGroup>
+                            </center>
                         </div>
-                        <table>
-                            {
-                                    itemsPrev.map((item,index)=>(
-                                        <>
-                                            <tr id={"li-item-"+index}>
-                                                <td>
-                                                    <button type="button" onClick={()=>dropItemPrev(index,item["name"])}> X </button>
-                                                </td>
-                                                <td>
-                                                    {item["name"]}
-                                                </td>
-                                                <td>
-                                                    <input type="text" size={3} name={"quantity-item"} defaultValue={"1"}/>
-                                                    <button id={"btn-item-"+index} type="button" onClick={()=>AddRowToList(item["name"],item["width"],item["height"],item["depth"],item["weight"],index)} >
-                                                    +
-                                                    </button> 
-                                                </td>  
-                                            </tr>
-                                        </>
-                                    ))
-                            }
-                            <tr><td colSpan={3}>
-                                <button type="button" onClick={openModal}>Nuevo Item</button>
-                            </td></tr>
-                        </table>
-                    </div>
-                    <div id="container-table">
-                        <table id="items-selected" ref={itemsSelectedTable} >
-                            <tr>
-                                <th>Descrip.</th>
+                        <br />
+                        <div id="li-items-prev">
+                            <Table variant="dark">
+                                {
+                                        itemsPrev.map((item,index)=>(
+                                            <>
+                                                <tr id={"li-item-"+index}>
+                                                    <td>
+                                                        <Button type="button" variant="danger" onClick={()=>dropItemPrev(index,item["name"])}> X </Button>
+                                                    </td>
+                                                    <td>
+                                                        {item["name"]}
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" size={3} name={"quantity-item"} defaultValue={"1"}/>
+                                                        <Button id={"btn-item-"+index} type="button" onClick={()=>AddRowToList(item["name"],item["width"],item["height"],item["depth"],item["weight"],index)} >
+                                                        +
+                                                        </Button> 
+                                                    </td>  
+                                                </tr>
+                                            </>
+                                        ))
+                                }
+                            </Table>
+                        </div>
+                        <div style={{textAlign:"center"}}>
+                            <Button variant="warning" type="button" onClick={openModal}>Nuevo Item</Button>
+                        </div>
+                    </Col>
+                    <Col xs={12} md={6} lg={6} id="container-table">
+                        <Table  variant="dark" striped bordered hover  ref={itemsSelectedTable} >
+                            <thead><tr>
+                                <th style={{width:"30%"}}>Descrip.</th>
                                 <th>Ancho (Mts)</th>
                                 <th>Alto (Mts)</th>
                                 <th>Profundo (Mts)</th>
                                 <th>Peso(KG)</th>
                                 <th>Cant.</th>
-                            </tr>
+                                <th></th>
+                            </tr></thead>
+                            <tbody>
                             {
                                     itemsSelected.map((item,index)=>(
                                         <tr id={"sel-item_"+index} >
@@ -297,11 +358,12 @@ const handleRenderRequest = async () => {
                                             <td>{item.weight}</td>
                                             <td>{item.quantity}</td>
                                             <td>
-                                                <button onClick={() => DropRowToList(item.name,index)} type ="button">X</button>
+                                                <Button variant="danger" onClick={() => DropRowToList(item.name,index)} >X</Button>
                                             </td>
                                           </tr>
                                     ))
                             }
+<<<<<<< Updated upstream
                         </table>
                     </div>
                 </div>
@@ -336,8 +398,49 @@ const handleRenderRequest = async () => {
                         </tr>
                     </table> 
                 </div>
+=======
+                            </tbody>
+                        </Table>
+                    </Col>
+                </Row>
+                <hr />
+                <Row id="panel-res">
+                    <Col xs={12} md={6} lg={6}>
+                        <Stack direction="horizontal" gap={5}>  
+                            <Button variant="light" type="submit" >Calcular Espacio</Button>
+                            <Badge bg={badgleColor} id="resultRef"> Se visualizará el resultado aquí </Badge>
+                        </Stack>
+                        <br />
+                        
+                        <FloatingLabel controlId="floatingTextarea2" label="Items que entran en la baulera">
+                            <Form.Control
+                            as="textarea"
+                            placeholder="Leave a comment here"
+                            style={{ height: '250px' ,color:'white'}}
+                            ref={textAreaFitted}
+                            readOnly
+                            />
+                        </FloatingLabel>
+                            <br />
+                        <FloatingLabel controlId="floatingTextarea2" label="Items que NO entran en la baulera">
+                            <Form.Control
+                            as="textarea"
+                            placeholder="Leave a comment here"
+                            style={{ height: '250px' ,color:'white'}}
+                            ref={textAreaUnFitted}
+                            readOnly
+                            />
+                        </FloatingLabel>
+                    </Col>
+                    <Col xs={12} md={6} lg={6}>
+                        <Button variant="warning" onClick={()=> handleRender3d()}>Renderizar 3D</Button>
+                        <br />
+                        <div id="divRender"></div>
+                    </Col>
+                </Row>
+>>>>>>> Stashed changes
             </form>
-        </section>
+        </Container>
         <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
@@ -348,25 +451,62 @@ const handleRenderRequest = async () => {
         
         <form className="form_i">
             <table>
-                <tr><th>
+                <tr><th colSpan={3}>
                     <h3>Crea un nuevo item a agregar</h3>
                     <h6>Medidas en Centimetros</h6>
                 </th></tr>
-                <tr><td>
-                    <label htmlFor="">Nombre: </label><input ref={itemsInput_name} type="text" size={30} placeholder="Cajonera chica" name="nombre_i"/>
-                </td></tr>
-                <tr><td>
-                    <label htmlFor="">Ancho: </label><input ref={itemsInput_w} type="number" className="input_i_num"  min={0} defaultValue={0} name="width_i"/>
-                </td></tr>
-                <tr><td>
-                    <label htmlFor="">Alto: </label><input ref={itemsInput_h} type="number" className="input_i_num"  min={0}  defaultValue={0} name="height_i"/>
-                </td></tr>
-                <tr><td>
-                    <label htmlFor="">Profundo: </label><input ref={itemsInput_d} type="number" className="input_i_num"  min={0}  defaultValue={0} name="depth_i"/>
-                </td></tr>
-                <tr><td>
-                    <label htmlFor="">Peso: </label><input ref={itemsInput_we} type="number" className="input_i_num"  min={0}  defaultValue={0} name="weight_i"/>
-                </td></tr>
+                <tr>
+                    <td>
+                        <label htmlFor="">Nombre: </label>
+                    </td>
+                    <td colSpan={2}>
+                        <input ref={itemsInput_name} type="text" size={30} placeholder="Cajonera chica" name="nombre_i"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label htmlFor="">Ancho: </label>
+                    </td>
+                    <td>
+                        <input ref={itemsInput_w} type="number" className="input_i_num"  min={0} defaultValue={0} name="width_i"/>
+                    </td>
+                    <td>
+                        <span> CMs</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label htmlFor="">Alto: </label>
+                    </td>
+                    <td>
+                        <input ref={itemsInput_h} type="number" className="input_i_num"  min={0}  defaultValue={0} name="height_i"/>
+                    </td>
+                    <td>
+                        <span> CMs</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label htmlFor="">Profundo: </label>
+                    </td>
+                    <td>
+                        <input ref={itemsInput_d} type="number" className="input_i_num"  min={0}  defaultValue={0} name="depth_i"/>
+                    </td>
+                    <td>
+                        <span> CMs</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label htmlFor="">Peso: </label>
+                    </td>
+                    <td>
+                        <input ref={itemsInput_we} type="number" className="input_i_num"  min={0}  defaultValue={0} name="weight_i"/>
+                    </td>
+                    <td>
+                        <span> kGs</span>
+                    </td>
+                </tr>
             </table>
             <button onClick={()=>AddItem()}>Agregar</button>
         </form>

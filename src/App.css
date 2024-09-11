@@ -1,7 +1,10 @@
+body{
+  background-color: #303030;
+}
+
 #root {
   margin: 0 auto;
   padding: 2rem;
-  text-align: center;
   min-width: -webkit-fill-available;
 }
 
@@ -49,32 +52,15 @@
 }
 
 
-#items-selected {
-  width: 100%;
-  border-collapse: collapse;
-  background-color: #222; /* Adjust background color as needed */
+#container-table {
+  margin-top: 30px;
+  height: 350px;
+  overflow-y: auto;
 }
 
-#items-selected th,#items-selected td {
-  border: 1px solid #333; /* Adjust border color as needed */
-  padding: 8px;
-  text-align: left; /* Adjust alignment as needed */
-  color: #fff; /* Text color */
-}
 
-#items-selected th {
-  background-color: #333; /* Header background color */
-}
-
-#panel-items ,#panel-res{
-  display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(500px,1fr));
-  grid-gap: 10px;
-  text-align: -webkit-center;
-}
 
 #container{
-  background-color: antiquewhite;
   padding: 20px;
-  min-width: min-content;
+  color: aliceblue;
 }

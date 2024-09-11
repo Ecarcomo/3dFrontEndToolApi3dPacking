@@ -1,12 +1,25 @@
 .input_i_num{
-    width: 40px;
+    width: 70px;
 } 
 
 .form_i{
     padding: 5px;
 }
 
-.res_box,.div_box{
+.div_box{
     display: flex;
     flex-direction: column;
+}
+
+#li-items-prev{
+    height: 200px;
+    overflow-y: auto;
+}
+
+#floatingTextarea2{
+    background-color: #303030;
+}
+
+#div-render{
+    border: 2px solid white;
 }
