@@ -2,9 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import {axiosClient} from "../Helpers/axiosCLient";
 import "./Panel.css"
 import Modal from 'react-modal';
-<<<<<<< Updated upstream
-import ThreeJSScene from './ThreeJSScene';
-=======
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import ToggleButtonGroup from "react-bootstrap/esm/ToggleButtonGroup";
 import Button from 'react-bootstrap/Button'
@@ -20,7 +17,6 @@ import { InfoItem, parserInfoItems } from "../functions/utils.functions";
 import { Scene } from "../functions/render.functions";
 import { createRoot } from "react-dom/client";
 
->>>>>>> Stashed changes
 
 Modal.setAppElement('#root');
 
@@ -86,16 +82,6 @@ export default function Panel () {
 
   const [itemsSelected, setItemsSelected] = useState<Item[]>([]);
   //const [indexItemSelected,setIndexItemSelected]= useState<number>(0);
-<<<<<<< Updated upstream
-  const [bauSelected, setBauSelected] = useState<Baulera>();
-  const [modalIsOpen, setIsOpen] = useState(false);
-  const [renderProps, setRenderProps] = useState({width: 1,
-    height: 1,
-    depth: 1,
-    position: { x: 0, y: 0, z: 0 },
-    rotation: { x: 0, y: 0, z: 0 },});
-=======
->>>>>>> Stashed changes
 
   const [dataRender ,setDataRender] = useState<InfoItem[]>([]);
 
@@ -252,23 +238,6 @@ export default function Panel () {
         console.log(itemsPrev);
     }
     
-const handleRenderRequest = async () => {
-    try {
-      const response = {
-        data: {
-          width: 2,
-          height: 2,
-          depth: 2,
-          position: { x: 1, y: 1, z: 1 },
-          rotation: { x: 0.5, y: 0.5, z: 0 },
-        }
-      };
-  
-      setRenderProps(response.data);
-    } catch (error) {
-      console.error('Error in POST request', error);
-    }
-  };
 
     const handleRender3d = () => {
         if(textAreaFitted.current){
@@ -363,42 +332,6 @@ const handleRenderRequest = async () => {
                                           </tr>
                                     ))
                             }
-<<<<<<< Updated upstream
-                        </table>
-                    </div>
-                </div>
-                <div id="panel-res">
-                    <table>
-                        <tr>
-                            <td>
-                                <button type="submit" >Calcular Espacio</button>
-                            </td>
-                            <td>
-                                <input type="text" id="result" ref={resultRef} placeholder="Se visualizará el resultado aquí" readOnly/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div className="res_box">
-                                    <label htmlFor="">Items que entran en la baulera</label>
-                                    <textarea cols={30} rows={10} ref={textAreaFitted} />
-                                </div>
-                                
-                                <div className="res_box">
-                                    <label htmlFor="">Items que NO entran en la baulera</label>
-                                    <textarea  cols={30} rows={10} ref={textAreaUnFitted}/>
-                                </div>
-                            </td>
-                            <td className="div_box">
-                                <button type="button" onClick={handleRenderRequest} >Renderizar 3D</button>
-                                <iframe src="">
-                                <ThreeJSScene cubeProps={renderProps} />
-                                </iframe>
-                            </td>
-                        </tr>
-                    </table> 
-                </div>
-=======
                             </tbody>
                         </Table>
                     </Col>
@@ -438,7 +371,6 @@ const handleRenderRequest = async () => {
                         <div id="divRender"></div>
                     </Col>
                 </Row>
->>>>>>> Stashed changes
             </form>
         </Container>
         <Modal
