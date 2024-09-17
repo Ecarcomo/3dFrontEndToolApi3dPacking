@@ -1,4 +1,4 @@
 import axios from "axios";
 
-export const axiosClient = axios.create({ baseURL:"http://localhost:5500"});
+export const axiosClient = axios.create({ baseURL:"http://localhost:5501"});
 

@@ -14,7 +14,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Stack from "react-bootstrap/esm/Stack";
 import { InfoItem, parserInfoItems } from "../functions/utils.functions";
-import { Scene } from "../functions/render.functions";
+import { Scene } from "./Render";
 import { createRoot } from "react-dom/client";
 
 
@@ -52,7 +52,7 @@ export default function Panel () {
     const itemsInput_name = useRef<HTMLInputElement | null>(null);
     const textAreaFitted = useRef<HTMLTextAreaElement | null>(null);
     const textAreaUnFitted = useRef<HTMLTextAreaElement | null>(null);
-    
+    const renderDiv = useRef<HTMLDivElement>(null);
 
    interface Item {
     name: string;
@@ -91,7 +91,7 @@ export default function Panel () {
    const bauleras = {
         "bauleras":[
             {"value":1,"name":"Baulera 60x300x300","width":0.6,"height":3.0,"depth":3.0, "weightLimit":1200},
-            {"value":2,"name":"Baulera 100x300x300","width":1.0,"height":3.0,"depth":3.0, "weightLimit":2000},
+            {"value":2,"name":"Baulera 150x300x300","width":1.5,"height":3.0,"depth":3.0, "weightLimit":2000},
             {"value":3,"name":"Baulera 500x300x300","width":5.0,"height":3.0,"depth":3.0, "weightLimit":10000}
         ]
    };
@@ -105,15 +105,20 @@ export default function Panel () {
 
     useEffect(()=>
     {
-        return ()=>{
-            const divRender = document.getElementById('divRender');
-            if (divRender) {
-                const root = createRoot(divRender);
-                root.render(<Scene objsCoordenadas={dataRender} />);
-            }
+        console.log(dataRender);
+        //const divRender = document.getElementById('divRender');
+
+        if (renderDiv.current) {
+            const root = createRoot(renderDiv.current);
+            root.render(<Scene w={renderDiv.current.clientWidth} h={renderDiv.current.clientHeight} bau={bauSelected} objsCoordenadas={dataRender} />);
         }
+        /*if (divRender) {
+            const root = createRoot(divRender);
+            root.render(<Scene w={divRender.style.width} h={divRender.style.height} objsCoordenadas={dataRender} />);
+        }*/
+       
         
-    },dataRender);
+    },[bauSelected,dataRender]);
     
     const openModal=() =>{
     setIsOpen(true);
@@ -366,9 +371,11 @@ export default function Panel () {
                         </FloatingLabel>
                     </Col>
                     <Col xs={12} md={6} lg={6}>
-                        <Button variant="warning" onClick={()=> handleRender3d()}>Renderizar 3D</Button>
+                        <Stack direction="horizontal">
+                            <Button variant="warning" onClick={()=> handleRender3d()}>Renderizar 3D</Button>
+                        </Stack>
                         <br />
-                        <div id="divRender"></div>
+                        <div id="divRender" ref={renderDiv}></div>
                     </Col>
                 </Row>
             </form>
