@@ -92,15 +92,17 @@ export default function Panel () {
         "bauleras":[
             {"value":1,"name":"Baulera 60x300x300","width":0.6,"height":3.0,"depth":3.0, "weightLimit":1200},
             {"value":2,"name":"Baulera 150x300x300","width":1.5,"height":3.0,"depth":3.0, "weightLimit":2000},
-            {"value":3,"name":"Baulera 500x300x300","width":5.0,"height":3.0,"depth":3.0, "weightLimit":10000}
+            {"value":3,"name":"Baulera 500x300x300","width":5.0,"height":3.0,"depth":3.0, "weightLimit":10000},
+            {"value":4,"name":"Caja Camion 210x200x460","width":2.1,"height":2.0,"depth":4.6, "weightLimit":3500}
         ]
    };
-   const [bauSelected, setBauSelected] = useState<Baulera>(bauleras["bauleras"][0]);
+   const [bauSelected, setBauSelected] = useState<Baulera>(bauleras["bauleras"][1]);
    //instancio items predeterminados
    const [itemsPrev, setItemsPrev] = useState<ItemsPrev[]>([
-    {"name": "sillon 2 cuerpos - 300x80x80 50kg","width":3.0,"height":0.8,"depth":0.8,"weight":50},
+    {"name": "sillon 2 cuerpos - 300x100x80 50kg","width":3.0,"height":1,"depth":0.8,"weight":50},
     {"name": "mesa de luz - 40x50x40 10kg","width":0.4,"height":0.5,"depth":0.4,"weight":10},
-    {"name": "caja - 30x10x30 2kg","width":0.3,"height":0.1,"depth":0.3,"weight":2}
+    {"name": "caja - 30x10x30 2kg","width":0.3,"height":0.1,"depth":0.3,"weight":2},
+    {"name": "item prueba - 50x100x150 80kg","width":0.5,"height":1,"depth":1.5,"weight":80}
     ]);
 
     useEffect(()=>
@@ -259,7 +261,7 @@ export default function Panel () {
                 <Row id="panel-items">
                     <Col xs={12} md={6} lg={6}>
                         <div>
-                            <center><h3><Badge bg="secondary">Medidas en CMs (Ancho ,alto ,profundo)</Badge></h3>
+                            <center><h3><Badge bg="secondary">Medidas en CMs (Ancho x Alto x Profundo)</Badge></h3>
                                 <br />
                                 Seleccionar una baulera
                                 <br />
@@ -272,8 +274,11 @@ export default function Panel () {
                                             variant="dark"
                                             name="radio"
                                             value={opcion.value}
-                                            checked={bauSelected.value === idx}
-                                            onChange={() => setBauSelected( bauleras["bauleras"][idx])}
+                                            checked={bauSelected['value'] == opcion.value}
+                                            onChange={() => {
+                                                setBauSelected( bauleras["bauleras"][idx]);
+                                                setDataRender([]);
+                                            }}
                                         >
                                             {opcion.name}
                                         </ToggleButton>
