@@ -3,4 +3,11 @@ import axios from "axios";
 const baseURL =
   import.meta.env.VITE_URL_API?.replace(/\/$/, "") || "http://localhost:5501";
 
-export const httpClient = axios.create({ baseURL });
+const apiKey = import.meta.env.VITE_API_KEY?.trim();
+
+export const httpClient = axios.create({
+  baseURL,
+  ...(apiKey
+    ? { headers: { "x-api-key": apiKey } }
+    : {}),
+});
