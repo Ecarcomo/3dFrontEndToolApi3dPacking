@@ -8,6 +8,12 @@ import {
   MOCK_CONTAINERS,
   MOCK_CATALOG_ITEMS,
 } from "../services/mockCatalogService";
+import {
+  getPackCalcMaxUses,
+  getPackCalcUsageCount,
+  incrementPackCalcUsage,
+  isPackCalcLimitReached,
+} from "../lib/packCalcUsageLimit";
 import type { CatalogItemPreset } from "../types/catalog";
 import type { BauleraInput } from "../types/packing";
 import { PackingScene3D } from "./PackingScene3D";
@@ -189,12 +195,21 @@ export default function Panel() {
       return false;
     }
 
+    if (isPackCalcLimitReached()) {
+      const max = getPackCalcMaxUses();
+      alert(
+        `Alcanzaste el máximo de ${max} cálculo${max === 1 ? "" : "s"} permitido${max === 1 ? "" : "s"}.`
+      );
+      return false;
+    }
+
     const data = {
       baulera: containerSelected,
       items: itemsSelected,
     };
     try {
       await submitPack(data);
+      incrementPackCalcUsage();
     } catch (error) {
       const msg = axios.isAxiosError(error)
         ? (error.response?.data as { message?: string })?.message ??
@@ -273,6 +288,10 @@ export default function Panel() {
   const weightLimitKg = containerSelected?.weightLimit ?? null;
   const weightExceeded =
     weightLimitKg != null && totalWeightKg > weightLimitKg;
+
+  const packCalcMaxUses = getPackCalcMaxUses();
+  const packCalcUsed = getPackCalcUsageCount();
+  const packCalcLimitReached = isPackCalcLimitReached();
 
   const apiBadgeClass =
     health === "ok"
@@ -614,21 +633,43 @@ export default function Panel() {
                 </span>
               ) : null}
             </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <button
-                type="submit"
-                disabled={packLoading}
-                className={btnPrimary}
-              >
-                {packLoading ? "Calculando…" : "Calcular espacio"}
-              </button>
-              <input
-                ref={resultRef}
-                type="text"
-                readOnly
-                placeholder="Estado del empaquetado"
-                className="min-w-[200px] flex-1 rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-zinc-200 placeholder-zinc-600"
-              />
+            <div className="flex flex-col gap-2">
+              <div className="flex flex-wrap items-center gap-3">
+                <button
+                  type="submit"
+                  disabled={packLoading || packCalcLimitReached}
+                  className={btnPrimary}
+                >
+                  {packLoading ? "Calculando…" : "Calcular espacio"}
+                </button>
+                <input
+                  ref={resultRef}
+                  type="text"
+                  readOnly
+                  placeholder="Estado del empaquetado"
+                  className="min-w-[200px] flex-1 rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-zinc-200 placeholder-zinc-600"
+                />
+              </div>
+              {packCalcMaxUses != null ? (
+                <p
+                  className={`text-xs ${
+                    packCalcLimitReached
+                      ? "font-medium text-red-400"
+                      : "text-zinc-500"
+                  }`}
+                >
+                  Límite de uso (este navegador):{" "}
+                  <span className="font-mono tabular-nums text-zinc-300">
+                    {packCalcUsed}/{packCalcMaxUses}
+                  </span>{" "}
+                  cálculos exitosos
+                  {packCalcLimitReached
+                    ? " — límite alcanzado"
+                    : packCalcMaxUses > packCalcUsed
+                      ? ` — quedan ${packCalcMaxUses - packCalcUsed}`
+                      : null}
+                </p>
+              ) : null}
             </div>
             <div className="flex min-h-0 flex-1 flex-col gap-1">
               <label className="text-xs font-medium uppercase tracking-wide text-zinc-500">

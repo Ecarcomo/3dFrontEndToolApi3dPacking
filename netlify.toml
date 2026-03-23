@@ -1,0 +1,22 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[functions]
+  directory = "netlify/functions"
+
+# Rutas API antes del fallback SPA (orden importa).
+[[redirects]]
+  from = "/health"
+  to = "/.netlify/functions/packing-health"
+  status = 200
+
+[[redirects]]
+  from = "/api/pack"
+  to = "/.netlify/functions/packing-pack"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
